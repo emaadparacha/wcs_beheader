@@ -6,7 +6,7 @@ import argparse
 from astropy.io import fits
 from concurrent.futures import ThreadPoolExecutor
 
-original_dir = "/data/flights/superbit_2023/raw_images/science_images"
+original_dir = "/data/flights/superbit_2023/raw_images/science_images" ## - Temporary fix - ##
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Solve field and update FITS file headers.')
@@ -31,10 +31,10 @@ solve_field_cmds = []
 # Temporary fix - since the original dir does not have images ending in {}_clean.fits, remove the _clean.fits from the file name to get the original image name
 for file in args.files:
     # Get the original file name
-    original_file = file.replace('_clean.fits', '.fits')
+    original_file = file.replace('_clean.fits', '.fits') # Temporary fix
 
     # Remove everything before the last / to get the file name
-    original_file = original_file.split('/')[-1]
+    original_file = original_file.split('/')[-1] # Temporary fix
 
     # Open the original file
     with fits.open(os.path.join(original_dir, original_file)) as hdul:
@@ -44,7 +44,7 @@ for file in args.files:
 
     # Construct the solve-field command
     solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145', 
-                       '--ra', target_ra, '--dec', target_dec, '--downsample', '2', '--objs', '1000', 
+                       '--ra', str(target_ra), '--dec', str(target_dec), '--downsample', '2', '--objs', '1000', 
                        '--tweak-order', '4', '--overwrite', '-D', wcs_dir, file]
     solve_field_cmd = ' '.join(solve_field_cmd)
 
