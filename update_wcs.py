@@ -38,6 +38,10 @@ for file in args.files:
 
     # Open the original file
     with fits.open(os.path.join(original_dir, original_file)) as hdul:
+
+        # Print full path name of the original file
+        print(f"Original file: {os.path.join(original_dir, original_file)}")
+
         # Get the target RA and DEC
         target_ra = hdul[0].header['TRG_RA']
         target_dec = hdul[0].header['TRG_DEC']
