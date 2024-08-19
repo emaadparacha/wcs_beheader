@@ -51,12 +51,16 @@ for file in args.files:
     # Append the command to the list
     solve_field_cmds.append(solve_field_cmd)
 
+print("Solve-field commands created - here they are:")
+print(solve_field_cmds)
+
 # Number of threads to use
 num_threads = args.num_threads
 
 # Run solve-field command on all files using multiple threads
 print(f"Running solve-field on all files using {num_threads} threads.")
 with ThreadPoolExecutor(max_workers=num_threads) as executor:
+    # Run the solve-field commands
     executor.map(os.system, solve_field_cmds)
 
 # Status print
