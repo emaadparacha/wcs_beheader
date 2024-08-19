@@ -6,6 +6,8 @@ import argparse
 from astropy.io import fits
 from concurrent.futures import ThreadPoolExecutor
 
+original_dir = "/data/flights/superbit_2023/raw_images/science_images"
+
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Solve field and update FITS file headers.')
 parser.add_argument('--files', metavar='F', type=str, nargs='+', help='A list of files to solve field and update headers for')
@@ -22,10 +24,32 @@ wcs_dir = os.path.join(old_dir, 'astrometry-out')
 if not os.path.exists(wcs_dir):
     os.makedirs(wcs_dir)
 
-# Solve field command
-solve_field_cmd = ['solve-field', '--scale-low', '0.1', '--scale-high', '180.0', '--scale-units', 'degwidth',
-                   '--downsample', '2', '--objs', '1000', '--tweak-order', '4', '--overwrite', '-D', wcs_dir]
-solve_field_cmd = ' '.join(solve_field_cmd)
+# Create a list to store the solve-field commands
+solve_field_cmds = []
+
+# For each file in the list, go to the original directory and check for the same image there, open it and get the "TRG_RA" and "TRG_DEC" values to input into the solve-field command for each image
+# Temporary fix - since the original dir does not have images ending in {}_clean.fits, remove the _clean.fits from the file name to get the original image name
+for file in args.files:
+    # Get the original file name
+    original_file = file.replace('_clean.fits', '.fits')
+
+    # Remove everything before the last / to get the file name
+    original_file = original_file.split('/')[-1]
+
+    # Open the original file
+    with fits.open(os.path.join(original_dir, original_file)) as hdul:
+        # Get the target RA and DEC
+        target_ra = hdul[0].header['TRG_RA']
+        target_dec = hdul[0].header['TRG_DEC']
+
+    # Construct the solve-field command
+    solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145', 
+                       '--ra', target_ra, '--dec', target_dec, '--downsample', '2', '--objs', '1000', 
+                       '--tweak-order', '4', '--overwrite', '-D', wcs_dir, file]
+    solve_field_cmd = ' '.join(solve_field_cmd)
+
+    # Append the command to the list
+    solve_field_cmds.append(solve_field_cmd)
 
 # Number of threads to use
 num_threads = args.num_threads
@@ -33,7 +57,7 @@ num_threads = args.num_threads
 # Run solve-field command on all files using multiple threads
 print(f"Running solve-field on all files using {num_threads} threads.")
 with ThreadPoolExecutor(max_workers=num_threads) as executor:
-    executor.map(lambda file: os.system(f"{solve_field_cmd} {file}"), args.files)
+    executor.map(os.system, solve_field_cmds)
 
 # Status print
 print("Solve-field completed.")
