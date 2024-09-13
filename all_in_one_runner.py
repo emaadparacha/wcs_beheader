@@ -13,6 +13,12 @@ import sip_tpv
 
 # Beheader function
 def remove_astrometry_data(fits_file):
+
+    # Check if the file exists and if it is a FITS file, if not, skip
+    if not os.path.isfile(fits_file) or not fits_file.endswith(".fits"):
+        print(f"Skipping {fits_file}: Not a valid FITS file")
+        return
+
     # Open the FITS file
     with fits.open(fits_file) as hdul:
         header = hdul[0].header
@@ -79,18 +85,15 @@ if len(all_files) == 0:
 
 # ### Beheader ###
 status_counter = 0
-for fits_file in all_files:
-    if os.path.isfile(fits_file) and fits_file.endswith(".fits"):
-        remove_astrometry_data(fits_file)
 
-    else:
-        print(f"Skipping {fits_file}: Not a valid FITS file")
+# Number of threads to use
+num_threads = args.num_threads
 
-    # Update status counter and print every 200 files
-    status_counter += 1
-    if status_counter % 200 == 0:
-        print(f"Processed {status_counter} files. {len(all_files) - status_counter} files remaining.")
-
+# Parallel processing of the beheader function
+print("Running beheader on all files.")
+with ThreadPoolExecutor(max_workers=num_threads) as executor:
+    # Run the beheader commands
+    executor.map(remove_astrometry_data, all_files)
 
 # ### Update WCS ###
 
