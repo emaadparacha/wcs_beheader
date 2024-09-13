@@ -86,6 +86,9 @@ if len(all_files) == 0:
     print("No FITS files found in the directory or provided list.")
     exit()
 
+# Sort the files
+all_files.sort()
+
 # ### Beheader ###
 status_counter = 0
 
