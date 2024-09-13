@@ -200,7 +200,7 @@ for file in files_not_complete:
     original_file = file.replace('_clean.fits', '.fits') # Temporary fix
 
     # Remove everything before the last / to get the file name
-    original_file = original_file.split('/')[-1] # Temporary fix
+    original_file = original_file.split('/')[6] # Temporary fix
 
     # Open the original file
     with fits.open(os.path.join(original_dir, original_file)) as hdul:
