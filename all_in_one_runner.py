@@ -38,6 +38,9 @@ def remove_astrometry_data(fits_file):
             hdul_new.writeto(fits_file, overwrite=True)
             print(f"Beheaded {fits_file}")
 
+    # Return the file name
+    print(f"Beheaded {fits_file}")
+
 # SIP to TPV function
 def convert_sip_to_tpv(fits_filename):
     # Open the FITS file
