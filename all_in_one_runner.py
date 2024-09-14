@@ -68,7 +68,7 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--files', metavar='F', type=str, nargs='+', help='A list of files to run the scripts on.')
 group.add_argument('--dir', type=str, help='A directory of files to run the scripts on.')
 parser.add_argument('--num_threads', type=int, default=30, help='Number of threads to use for solve-field command')
-parser.add_arguemnt('--mode', type=str, default='all', help='Mode to run the script in. Options are: all, behead, wcs, siptotpv')
+parser.add_argument('--mode', type=str, default='all', help='Mode to run the script in. Options are: all, behead, wcs, siptotpv')
 
 # Parse command line arguments
 args = parser.parse_args()
