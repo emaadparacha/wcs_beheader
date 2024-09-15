@@ -134,6 +134,11 @@ if args.mode == 'wcs' or args.mode == 'all':
         # Remove everything before the last / to get the file name
         original_file = original_file.split('/')[-1] # Temporary fix
 
+        # If the original file does not exist, skip
+        if not os.path.exists(os.path.join(original_dir, original_file)):
+            print(f"Original file {original_file} does not exist. Skipping solve-field for {file}.")
+            continue
+
         # Open the original file
         with fits.open(os.path.join(original_dir, original_file)) as hdul:
 
