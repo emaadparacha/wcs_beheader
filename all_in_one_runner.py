@@ -18,6 +18,14 @@ def remove_astrometry_data(fits_file):
     if not os.path.isfile(fits_file) or not fits_file.endswith(".fits"):
         print(f"Skipping {fits_file}: Not a valid FITS file")
         return
+    
+    # Check if the file is corrupted
+    try:
+        with fits.open(fits_file) as hdul:
+            pass
+    except:
+        print(f"Skipping {fits_file}: File is corrupted")
+        return
 
     # Open the FITS file
     with fits.open(fits_file) as hdul:
@@ -137,6 +145,23 @@ if args.mode == 'wcs' or args.mode == 'all':
         # If the original file does not exist, skip
         if not os.path.exists(os.path.join(original_dir, original_file)):
             print(f"Original file {original_file} does not exist. Skipping solve-field for {file}.")
+            continue
+
+        # If the original file is truncated or corrupted, skip
+        try:
+            with fits.open(os.path.join(original_dir, original_file)) as hdul:
+                pass
+        except:
+            print(f"Original file {original_file} is corrupted. Skipping solve-field for {file}.")
+            continue
+
+        # Do the same for the fits file
+        try:
+            print(f"Checking file {file}")
+            with fits.open(file) as hdul:
+                pass
+        except:
+            print(f"File {file} is corrupted. Skipping solve-field for {file}.")
             continue
 
         # Open the original file
