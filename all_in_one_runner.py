@@ -150,6 +150,7 @@ if args.mode == 'wcs' or args.mode == 'all':
         # If the original file is truncated or corrupted, skip
         try:
             with fits.open(os.path.join(original_dir, original_file)) as hdul:
+                print(f"Checking original file {original_file}")
                 pass
         except:
             print(f"Original file {original_file} is corrupted. Skipping solve-field for {file}.")
@@ -157,8 +158,8 @@ if args.mode == 'wcs' or args.mode == 'all':
 
         # Do the same for the fits file
         try:
-            print(f"Checking file {file}")
             with fits.open(file) as hdul:
+                print(f"Checking file {file}")
                 pass
         except:
             print(f"File {file} is corrupted. Skipping solve-field for {file}.")
