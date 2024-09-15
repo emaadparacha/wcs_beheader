@@ -68,6 +68,9 @@ def convert_sip_to_tpv(fits_filename):
 # Original science images directory
 original_dir = "/data/flights/superbit_2023/raw_images/science_images"
 
+# Astrometry out scratch directory
+astrometry_out_dir = "/data/analysis/superbit_2023/scratch_analysis/astrometry-out"
+
 # Set up argument parser (take in a list of files or a directory)
 parser = argparse.ArgumentParser(description='Run beheader, update WCS, and convert SIP to TPV on FITS files.')
 
@@ -124,7 +127,7 @@ if args.mode == 'wcs' or args.mode == 'all':
 
     # Set the directory paths
     old_dir = os.getcwd()
-    wcs_dir = os.path.join(old_dir, 'astrometry-out')
+    wcs_dir = astrometry_out_dir # Moving to /data because of space issues
 
     # Ensure new directory exists
     if not os.path.exists(wcs_dir):
