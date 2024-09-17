@@ -340,6 +340,19 @@ if args.mode == 'wcs' or args.mode == 'all':
 
 if args.mode == 'siptotpv' or args.mode == 'all':
 
+    files_not_complete_round_2 = []
+
+    # Read the files_not_complete_round_2 file if it exists and store the files in a list
+    if os.path.exists('files_not_complete.txt'):
+        with open('files_not_complete.txt', 'r') as f:
+            files_not_complete_round_2 = f.read().splitlines()
+
+    # Error check and print the number of files not complete
+    if len(files_not_complete_round_2) == 0:
+        print("No files not complete found.")
+    else:
+        print(f"Number of files not complete: {len(files_not_complete_round_2)}")
+
     # Iterate over the provided FITS files and convert their headers
     for file in all_files:
 
