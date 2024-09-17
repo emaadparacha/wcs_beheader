@@ -341,6 +341,7 @@ if args.mode == 'wcs' or args.mode == 'all':
 if args.mode == 'siptotpv' or args.mode == 'all':
 
     files_not_complete_round_2 = []
+    status_counter = 0
 
     # Read the files_not_complete_round_2 file if it exists and store the files in a list
     if os.path.exists('files_not_complete.txt'):
