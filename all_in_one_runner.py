@@ -53,6 +53,12 @@ def remove_astrometry_data(fits_file):
 def convert_sip_to_tpv(fits_filename):
     # Open the FITS file
     with fits.open(fits_filename) as hdul:
+
+        # Check if B_ORDER is present in the header, if not, skip
+        if 'B_ORDER' not in hdul[0].header:
+            print(f"Skipping {fits_filename}: B_ORDER not present in header")
+            return
+
         # Modify the header in-place
         sip_tpv.sip_to_pv(hdul[0].header)
         
@@ -340,6 +346,10 @@ if args.mode == 'wcs' or args.mode == 'all':
 
 if args.mode == 'siptotpv' or args.mode == 'all':
 
+    # Number of threads to use
+    num_threads = args.num_threads
+
+    # List to store the files not complete
     files_not_complete_round_2 = []
     status_counter = 0
 
@@ -354,17 +364,14 @@ if args.mode == 'siptotpv' or args.mode == 'all':
     else:
         print(f"Number of files not complete: {len(files_not_complete_round_2)}")
 
-    # Iterate over the provided FITS files and convert their headers
-    for file in all_files:
+    # Remove the files_not_complete_round_2 from the all_files list
+    all_files = [file for file in all_files if file not in files_not_complete_round_2]
 
-        # If the file is not in files_not_complete_round_2, convert the SIP to TPV
-        if file not in files_not_complete_round_2:
-            convert_sip_to_tpv(file)
-
-            # Update status counter and print every 200 files
-            status_counter += 1
-            if status_counter % 200 == 0:
-                print(f"Processed {status_counter} files. {len(all_files) - status_counter} files remaining.")
+    # Convert SIP to TPV
+    print("Converting SIP to TPV.")
+    with ThreadPoolExecutor(max_workers=num_threads) as executor:
+        # Run the SIP to TPV commands
+        executor.map(convert_sip_to_tpv, all_files)
 
     print("Files converted")
 
