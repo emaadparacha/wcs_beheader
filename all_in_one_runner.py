@@ -354,9 +354,6 @@ if args.mode == 'siptotpv' or args.mode == 'all':
     else:
         print(f"Number of files not complete: {len(files_not_complete_round_2)}")
 
-    # Temporary fix - since I already ran, I will skip the first one
-    all_files = all_files[1:]
-
     # Iterate over the provided FITS files and convert their headers
     for file in all_files:
 
