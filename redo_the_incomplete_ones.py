@@ -84,7 +84,6 @@ files_not_complete_text = "/home/bit/git/wcs_beheader/files_not_complete.txt"
 parser = argparse.ArgumentParser(description='Run beheader, update WCS, and convert SIP to TPV on FITS files.')
 
 # Set it up to take either a list of files of files or a directory (one or the other is required, not both)
-group = parser.add_mutually_exclusive_group(required=True)
 parser.add_argument('--num_threads', type=int, default=30, help='Number of threads to use for solve-field command')
 parser.add_argument('--mode', type=str, default='all', help='Mode to run the script in. Options are: all, behead, wcs, siptotpv')
 
