@@ -114,6 +114,16 @@ if len(all_files) == 0:
 # Sort the files
 all_files.sort()
 
+# Print
+print(f"Number of files to process: {len(all_files)}")
+# print the first 10
+print("First 10 files:")
+for file in all_files[:10]:
+    print(file)
+
+# Exit
+exit()
+
 # ### Beheader ###
 
 if args.mode == 'behead' or args.mode == 'all':
