@@ -379,5 +379,9 @@ if args.mode == 'siptotpv' or args.mode == 'all':
 
     print("Files converted")
 
+print("Number of Files not Complete with Downsample 6:", len(files_not_complete))
+
+print("Number of Files not Complete with Downsample 8:", len(files_not_complete_round_2))
+
 print("All operations completed.")
 
