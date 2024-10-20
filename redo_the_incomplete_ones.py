@@ -278,7 +278,7 @@ if args.mode == 'wcs' or args.mode == 'all':
 
         # Construct the solve-field command
         solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145', 
-                        '--ra', str(target_ra), '--dec', str(target_dec), '--radius', '10', '--downsample', '4', '--objs', '1000', 
+                        '--ra', str(target_ra), '--dec', str(target_dec), '--radius', '10', '--downsample', '8', '--objs', '1000', 
                         '--tweak-order', '4', '--cpulimit', '75', '--overwrite', '-D', wcs_dir, file]
         solve_field_cmd = ' '.join(solve_field_cmd)
 
