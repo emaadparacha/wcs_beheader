@@ -155,46 +155,38 @@ if args.mode == 'wcs' or args.mode == 'all':
         # Remove everything before the last / to get the file name
         original_file = original_file.split('/')[-1] # Temporary fix
 
-        # If the original file does not exist, skip
+        solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145',
+                        '--radius', '10', '--downsample', '6', '--objs', '1000', '--tweak-order', '4', '--cpulimit', '75',
+                        '--overwrite', '-D', wcs_dir, file]
+
+        # If the original file does not exist
         if not os.path.exists(os.path.join(original_dir, original_file)):
-            print(f"Original file {original_file} does not exist. Skipping solve-field for {file}.")
-            continue
+            print(f"Original file {original_file} does not exist. Running solve-field without RA/DEC for {file}.")
+        else:
+            # If the original file is truncated or corrupted, skip
+            try:
+                with fits.open(os.path.join(original_dir, original_file)) as hdul:
+                    pass
+            except:
+                print(f"Original file {original_file} is corrupted. Skipping solve-field for {file}.")
+                continue
 
-        # If the original file is truncated or corrupted, skip
-        try:
+            # Open the original file to retrieve RA/DEC
             with fits.open(os.path.join(original_dir, original_file)) as hdul:
-                print(f"Checking original file {original_file}")
-                pass
-        except:
-            print(f"Original file {original_file} is corrupted. Skipping solve-field for {file}.")
-            continue
+                try:
+                    target_ra = hdul[0].header['TRG_RA']
+                    target_dec = hdul[0].header['TRG_DEC']
 
-        # Do the same for the fits file
-        try:
-            with fits.open(file) as hdul:
-                print(f"Checking file {file}")
-                pass
-        except:
-            print(f"File {file} is corrupted. Skipping solve-field for {file}.")
-            continue
+                    # Re-initialize solve_field_cmd to include RA/DEC after scales
+                    solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145',
+                                    '--ra', str(target_ra), '--dec', str(target_dec), '--radius', '10', '--downsample', '6',
+                                    '--objs', '1000', '--tweak-order', '4', '--cpulimit', '75', '--overwrite', '-D', wcs_dir, file]
+                    print(f"RA/DEC found for {file}: RA={target_ra}, DEC={target_dec}.")
+                except KeyError:
+                    print(f"RA/DEC not found in original file {original_file}. Running solve-field without RA/DEC for {file}.")
 
-        # Open the original file
-        with fits.open(os.path.join(original_dir, original_file)) as hdul:
-
-            # Print full path name of the original file
-            print(f"Original file: {os.path.join(original_dir, original_file)}")
-
-            # Get the target RA and DEC
-            target_ra = hdul[0].header['TRG_RA']
-            target_dec = hdul[0].header['TRG_DEC']
-
-        # Construct the solve-field command
-        solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145', 
-                        '--ra', str(target_ra), '--dec', str(target_dec), '--radius', '10', '--downsample', '6', '--objs', '1000', 
-                        '--tweak-order', '4', '--cpulimit', '75', '--overwrite', '-D', wcs_dir, file]
+        # Join the command as a string and add it to the list
         solve_field_cmd = ' '.join(solve_field_cmd)
-
-        # Append the command to the list
         solve_field_cmds.append(solve_field_cmd)
 
     #print("Solve-field commands created - here they are:")
@@ -266,23 +258,38 @@ if args.mode == 'wcs' or args.mode == 'all':
         # Remove everything before the last / to get the file name
         original_file = original_file.split('/')[-1] # Temporary fix
 
-        # Open the original file
-        with fits.open(os.path.join(original_dir, original_file)) as hdul:
+        solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145',
+                        '--radius', '10', '--downsample', '8', '--objs', '1000', '--tweak-order', '4', '--cpulimit', '75',
+                        '--overwrite', '-D', wcs_dir, file]
 
-            # Print full path name of the original file
-            print(f"Original file: {os.path.join(original_dir, original_file)}")
+        # If the original file does not exist
+        if not os.path.exists(os.path.join(original_dir, original_file)):
+            print(f"Original file {original_file} does not exist. Running solve-field without RA/DEC for {file}.")
+        else:
+            # If the original file is truncated or corrupted, skip
+            try:
+                with fits.open(os.path.join(original_dir, original_file)) as hdul:
+                    pass
+            except:
+                print(f"Original file {original_file} is corrupted. Skipping solve-field for {file}.")
+                continue
 
-            # Get the target RA and DEC
-            target_ra = hdul[0].header['TRG_RA']
-            target_dec = hdul[0].header['TRG_DEC']
+            # Open the original file to retrieve RA/DEC
+            with fits.open(os.path.join(original_dir, original_file)) as hdul:
+                try:
+                    target_ra = hdul[0].header['TRG_RA']
+                    target_dec = hdul[0].header['TRG_DEC']
 
-        # Construct the solve-field command
-        solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145', 
-                        '--ra', str(target_ra), '--dec', str(target_dec), '--radius', '10', '--downsample', '8', '--objs', '1000', 
-                        '--tweak-order', '4', '--cpulimit', '75', '--overwrite', '-D', wcs_dir, file]
+                    # Re-initialize solve_field_cmd to include RA/DEC after scales
+                    solve_field_cmd = ['solve-field', '--scale-units', 'arcsecperpix', '--scale-low', '0.135', '--scale-high', '0.145',
+                                    '--ra', str(target_ra), '--dec', str(target_dec), '--radius', '10', '--downsample', '8',
+                                    '--objs', '1000', '--tweak-order', '4', '--cpulimit', '75', '--overwrite', '-D', wcs_dir, file]
+                    print(f"RA/DEC found for {file}: RA={target_ra}, DEC={target_dec}.")
+                except KeyError:
+                    print(f"RA/DEC not found in original file {original_file}. Running solve-field without RA/DEC for {file}.")
+
+        # Join the command as a string and add it to the list
         solve_field_cmd = ' '.join(solve_field_cmd)
-
-        # Append the command to the list
         solve_field_cmds.append(solve_field_cmd)
 
     #print("Solve-field commands created - here they are:")
